@@ -18,4 +18,7 @@ public interface ChamadoRepository extends JpaRepository<Chamado, Long> {
     // Busca uma lista de chamados que estão especificamente com o status ABERTO
     @Query("SELECT c FROM Chamado c WHERE c.status = 'ABERTO'")
     List<Chamado> findAllByStatusAberto();
+
+    // Conta o número de chamados associados a um técnico específico pelo seu ID
+    long countByTecnicoId(Long tecnicoId);
 }
