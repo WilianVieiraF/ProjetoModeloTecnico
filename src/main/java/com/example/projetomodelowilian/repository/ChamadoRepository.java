@@ -21,4 +21,10 @@ public interface ChamadoRepository extends JpaRepository<Chamado, Long> {
 
     // Conta o número de chamados associados a um técnico específico pelo seu ID
     long countByTecnicoId(Long tecnicoId);
+
+    // Verifica se existe algum chamado para um técnico que não esteja com o status ENCERRADO
+    boolean existsByTecnicoIdAndStatusNot(Long tecnicoId, Status status);
+
+    // Verifica se existe algum chamado para um cliente que não esteja com o status ENCERRADO
+    boolean existsByClienteIdAndStatusNot(Long clienteId, Status status);
 }

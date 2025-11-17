@@ -11,8 +11,8 @@ import java.util.List;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    // Busca um cliente pelo seu endereço de e-mail
     Optional<Cliente> findByEmail(String email);
+    Optional<Cliente> findByCpf(String cpf);
 
     List<Cliente> findByDataCriacaoBetween(LocalDateTime dataInicio, LocalDateTime dataFim);
 

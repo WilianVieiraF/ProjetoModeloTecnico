@@ -1,6 +1,7 @@
 package com.example.projetomodelowilian.DTO;
 
 import com.example.projetomodelowilian.entity.Tecnico;
+import org.hibernate.validator.constraints.br.CPF;
 
 public class TecnicoDTO extends PessoaDTO {
 
