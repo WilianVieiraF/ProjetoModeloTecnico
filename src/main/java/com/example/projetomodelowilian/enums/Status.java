@@ -30,3 +30,4 @@ public enum Status {
         throw new IllegalArgumentException("Código inválido para Status: " + codigo);
     }
 }
+

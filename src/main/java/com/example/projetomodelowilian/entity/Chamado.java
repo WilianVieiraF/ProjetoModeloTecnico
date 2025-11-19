@@ -36,7 +36,7 @@ public class Chamado {
     @ManyToOne(optional = false)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
-    
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
@@ -70,4 +70,3 @@ public class Chamado {
     public Tecnico getTecnico() { return tecnico; }
     public void setTecnico(Tecnico tecnico) { this.tecnico = tecnico; }
 }
-

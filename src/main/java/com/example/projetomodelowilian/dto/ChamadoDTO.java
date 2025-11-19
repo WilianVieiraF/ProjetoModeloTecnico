@@ -1,4 +1,4 @@
-package com.example.projetomodelowilian.DTO;
+package com.example.projetomodelowilian.dto;
 
 import com.example.projetomodelowilian.entity.Chamado;
 import com.example.projetomodelowilian.enums.Prioridade;

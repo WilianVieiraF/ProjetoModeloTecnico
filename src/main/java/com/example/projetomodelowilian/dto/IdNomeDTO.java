@@ -1,16 +1,16 @@
-package com.example.projetomodelowilian.DTO;
+package com.example.projetomodelowilian.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 public class IdNomeDTO {
 
     @NotNull(message = "Id é obrigatório")
     private Long id;
 
-    @NotBlank(message = "Nome é obrigatório")
-    @Size(min = 3, max = 50, message = "Nome deve ter entre 3 e 50 caracteres")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String nome;
 
     public IdNomeDTO() { }

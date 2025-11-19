@@ -1,4 +1,4 @@
-package com.example.projetomodelowilian.DTO;
+package com.example.projetomodelowilian.dto;
 
 import com.example.projetomodelowilian.entity.Pessoa;
 import com.example.projetomodelowilian.enums.Perfil;
@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -21,7 +20,6 @@ public class PessoaDTO {
     private String nome;
 
     @NotBlank(message = "CPF é obrigatório")
-    @CPF(message = "CPF inválido")
     @Size(min = 11, max = 14, message = "CPF deve ter entre 11 e 14 caracteres")
     private String cpf;
 
@@ -29,6 +27,11 @@ public class PessoaDTO {
     @Email(message = "E-mail inválido")
     private String email;
 
+    @NotBlank(message = "Senha é obrigatória")
+    @Size(min = 6, max = 100, message = "Senha deve ter entre 6 e 100 caracteres")
+    private String senha;
+
+    @NotNull(message = "Perfis é obrigatório")
     private Set<Perfil> perfis = new HashSet<>();
 
     private LocalDateTime dataCriacao;
@@ -40,6 +43,7 @@ public class PessoaDTO {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
+        this.senha = senha;
         if (perfis != null) {
             this.perfis = perfis;
         }
@@ -51,6 +55,7 @@ public class PessoaDTO {
         this.nome = entity.getNome();
         this.cpf = entity.getCpf();
         this.email = entity.getEmail();
+        this.senha = entity.getSenha();
         this.perfis = entity.getPerfis();
         this.dataCriacao = entity.getDataCriacao();
     }
@@ -67,9 +72,14 @@ public class PessoaDTO {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+
     public Set<Perfil> getPerfis() { return perfis; }
     public void setPerfis(Set<Perfil> perfis) { this.perfis = perfis; }
 
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
 }
+
+

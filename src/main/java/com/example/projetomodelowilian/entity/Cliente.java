@@ -1,6 +1,5 @@
 package com.example.projetomodelowilian.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -12,7 +11,7 @@ import java.util.List;
 @Table(name = "clientes")
 public class Cliente extends Pessoa {
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "cliente")
     private List<Chamado> chamados = new ArrayList<>();
 
