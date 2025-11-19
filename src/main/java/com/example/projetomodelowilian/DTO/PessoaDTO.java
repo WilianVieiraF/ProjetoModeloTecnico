@@ -29,11 +29,6 @@ public class PessoaDTO {
     @Email(message = "E-mail inválido")
     private String email;
 
-    @NotBlank(message = "Senha é obrigatória")
-    @Size(min = 6, max = 100, message = "Senha deve ter entre 6 e 100 caracteres")
-    private String senha;
-
-    @NotNull(message = "Perfis é obrigatório")
     private Set<Perfil> perfis = new HashSet<>();
 
     private LocalDateTime dataCriacao;
@@ -45,7 +40,6 @@ public class PessoaDTO {
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
-        this.senha = senha;
         if (perfis != null) {
             this.perfis = perfis;
         }
@@ -57,7 +51,6 @@ public class PessoaDTO {
         this.nome = entity.getNome();
         this.cpf = entity.getCpf();
         this.email = entity.getEmail();
-        this.senha = entity.getSenha();
         this.perfis = entity.getPerfis();
         this.dataCriacao = entity.getDataCriacao();
     }
@@ -73,9 +66,6 @@ public class PessoaDTO {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
 
     public Set<Perfil> getPerfis() { return perfis; }
     public void setPerfis(Set<Perfil> perfis) { this.perfis = perfis; }

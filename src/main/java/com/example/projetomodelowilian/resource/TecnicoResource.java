@@ -1,61 +1,63 @@
 package com.example.projetomodelowilian.resource;
 
-import com.example.projetomodelowilian.model.Tecnico;
+import com.example.projetomodelowilian.DTO.TecnicoCreateDTO;
+import com.example.projetomodelowilian.DTO.TecnicoDTO;
+import com.example.projetomodelowilian.entity.Tecnico;
 import com.example.projetomodelowilian.service.TecnicoService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
-@Path("/tecnicos")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/tecnicos")
 public class TecnicoResource {
 
-    @Inject
+    @Autowired
     private TecnicoService tecnicoService;
 
-    @GET
-    public Response listarTodos() {
+    @GetMapping
+    public ResponseEntity<List<TecnicoDTO>> listarTodos() {
         List<Tecnico> tecnicos = tecnicoService.listarTodos();
-        return Response.ok(tecnicos).build();
+        List<TecnicoDTO> tecnicosDTO = tecnicos.stream().map(TecnicoDTO::new).collect(Collectors.toList());
+        return ResponseEntity.ok(tecnicosDTO);
     }
 
-    @GET
-    @Path("/{id}")
-    public Response buscarPorId(@PathParam("id") Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<TecnicoDTO> buscarPorId(@PathVariable Long id) {
         Tecnico tecnico = tecnicoService.buscarPorId(id);
         if (tecnico != null) {
-            return Response.ok(tecnico).build();
+            return ResponseEntity.ok(new TecnicoDTO(tecnico));
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseEntity.notFound().build();
     }
 
-    @POST
-    public Response criar(Tecnico tecnico) {
-        Tecnico novoTecnico = tecnicoService.salvar(tecnico);
-        URI uri = URI.create("/tecnicos/" + novoTecnico.getId());
-        return Response.created(uri).entity(novoTecnico).build();
+    @PostMapping
+    public ResponseEntity<TecnicoDTO> criar(@Valid @RequestBody TecnicoCreateDTO tecnicoDTO) {
+        Tecnico novoTecnico = tecnicoService.create(tecnicoDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(novoTecnico.getId()).toUri();
+        return ResponseEntity.created(uri).body(new TecnicoDTO(novoTecnico));
     }
 
-    @PUT
-    @Path("/{id}")
-    public Response atualizar(@PathParam("id") Long id, Tecnico tecnico) {
-        Tecnico tecnicoAtualizado = tecnicoService.atualizar(id, tecnico);
+    @PutMapping("/{id}")
+    public ResponseEntity<TecnicoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody TecnicoCreateDTO tecnicoDTO) {
+        Tecnico tecnicoAtualizado = tecnicoService.update(id, tecnicoDTO);
         if (tecnicoAtualizado != null) {
-            return Response.ok(tecnicoAtualizado).build();
+            return ResponseEntity.ok(new TecnicoDTO(tecnicoAtualizado));
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseEntity.notFound().build();
     }
 
-    @DELETE
-    @Path("/{id}")
-    public Response deletar(@PathParam("id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         tecnicoService.deletar(id);
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 }

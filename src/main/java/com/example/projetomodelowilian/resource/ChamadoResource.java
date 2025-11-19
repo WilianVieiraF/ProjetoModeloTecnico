@@ -1,63 +1,61 @@
 package com.example.projetomodelowilian.resource;
 
-import com.example.projetomodelowilian.model.Chamado;
+import com.example.projetomodelowilian.DTO.ChamadoDTO;
+import com.example.projetomodelowilian.entity.Chamado;
 import com.example.projetomodelowilian.service.ChamadoService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Path("/chamados")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/chamados")
 public class ChamadoResource {
 
-    @Inject
+    @Autowired
     private ChamadoService chamadoService;
 
-    @GET
-    public Response listarTodos() {
+    @GetMapping
+    public ResponseEntity<List<ChamadoDTO>> listarTodos() {
         List<Chamado> chamados = chamadoService.listarTodos();
-        return Response.ok(chamados).build();
+        List<ChamadoDTO> chamadosDTO = chamados.stream().map(ChamadoDTO::new).collect(Collectors.toList());
+        return ResponseEntity.ok(chamadosDTO);
     }
 
-    @GET
-    @Path("/{id}")
-    public Response buscarPorId(@PathParam("id") Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ChamadoDTO> buscarPorId(@PathVariable Long id) {
         Chamado chamado = chamadoService.buscarPorId(id);
         if (chamado != null) {
-            return Response.ok(chamado).build();
+            return ResponseEntity.ok(new ChamadoDTO(chamado));
         }
- 
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseEntity.notFound().build();
     }
 
-    @POST
-    public Response criar(Chamado chamado) {
-        Chamado novoChamado = chamadoService.salvar(chamado);
-
-        URI uri = URI.create("/chamados/" + novoChamado.getId());
-        return Response.created(uri).entity(novoChamado).build();
+    @PostMapping
+    public ResponseEntity<ChamadoDTO> criar(@Valid @RequestBody ChamadoDTO chamadoDTO) {
+        // Supondo que você terá um método create no service que aceita um DTO
+        Chamado novoChamado = chamadoService.create(chamadoDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(novoChamado.getId()).toUri();
+        return ResponseEntity.created(uri).body(new ChamadoDTO(novoChamado));
     }
 
-    @PUT
-    @Path("/{id}")
-    public Response atualizar(@PathParam("id") Long id, Chamado chamado) {
-        Chamado chamadoAtualizado = chamadoService.atualizar(id, chamado);
+    @PutMapping("/{id}")
+    public ResponseEntity<ChamadoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ChamadoDTO chamadoDTO) {
+        Chamado chamadoAtualizado = chamadoService.atualizar(id, chamadoDTO);
         if (chamadoAtualizado != null) {
-            return Response.ok(chamadoAtualizado).build();
+            return ResponseEntity.ok(new ChamadoDTO(chamadoAtualizado));
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseEntity.notFound().build();
     }
 
-    @DELETE
-    @Path("/{id}")
-    public Response deletar(@PathParam("id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         chamadoService.deletar(id);
-
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 }

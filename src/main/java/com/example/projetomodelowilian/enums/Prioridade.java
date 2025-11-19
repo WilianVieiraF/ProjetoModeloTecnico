@@ -27,6 +27,6 @@ public enum Prioridade {
             }
         }
 
-        throw new IllegalArgumentException("Código inválido para Status: " + codigo);
+        throw new IllegalArgumentException("Código inválido para Prioridade: " + codigo);
     }
 }

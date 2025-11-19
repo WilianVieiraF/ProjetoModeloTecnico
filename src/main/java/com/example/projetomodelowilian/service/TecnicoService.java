@@ -1,6 +1,7 @@
 package com.example.projetomodelowilian.service;
 
 import com.example.projetomodelowilian.DTO.TecnicoDTO;
+import com.example.projetomodelowilian.DTO.PessoaCreateDTO;
 import com.example.projetomodelowilian.entity.Cliente;
 import com.example.projetomodelowilian.entity.Tecnico;
 import com.example.projetomodelowilian.enums.Status;
@@ -37,18 +38,18 @@ public class TecnicoService {
         return tecnicoRepository.findAll();
     }
 
-    public Tecnico create(TecnicoDTO tecnicoDTO) {
+    public Tecnico create(PessoaCreateDTO tecnicoDTO) {
         tecnicoDTO.setId(null);
         tecnicoDTO.setSenha(passwordEncoder.encode(tecnicoDTO.getSenha()));
         validaPorCpfEEmail(tecnicoDTO);
-        Tecnico newTecnico = fromDTO(tecnicoDTO);
+        Tecnico newTecnico = fromDTOCreate(tecnicoDTO);
         return tecnicoRepository.save(newTecnico);
     }
 
-    public Tecnico update(Long id, TecnicoDTO tecnicoDTO) {
+    public Tecnico update(Long id, PessoaCreateDTO tecnicoDTO) {
         tecnicoDTO.setId(id);
         Tecnico oldTecnico = findById(id);
-        tecnicoDTO.setSenha(passwordEncoder.encode(tecnicoDTO.getSenha()));
+        // A senha só deve ser atualizada se for fornecida. Lógica adicional pode ser necessária.
         validaPorCpfEEmail(tecnicoDTO);
         oldTecnico = fromDTO(tecnicoDTO);
         return tecnicoRepository.save(oldTecnico);
@@ -64,7 +65,7 @@ public class TecnicoService {
         tecnicoRepository.deleteById(id);
     }
 
-    private void validaPorCpfEEmail(TecnicoDTO tecnicoDTO) {
+    private void validaPorCpfEEmail(PessoaCreateDTO tecnicoDTO) {
         // Validação de CPF
         Optional<Tecnico> tecnicoExistente = tecnicoRepository.findByCpf(tecnicoDTO.getCpf());
         if (tecnicoExistente.isPresent() && !tecnicoExistente.get().getId().equals(tecnicoDTO.getId())) {
@@ -88,13 +89,24 @@ public class TecnicoService {
         }
     }
 
-    private Tecnico fromDTO(TecnicoDTO dto) {
+    private Tecnico fromDTO(PessoaCreateDTO dto) {
         Tecnico tecnico = new Tecnico();
         tecnico.setId(dto.getId());
         tecnico.setNome(dto.getNome());
         tecnico.setCpf(dto.getCpf());
         tecnico.setEmail(dto.getEmail());
-        tecnico.setSenha(dto.getSenha());
+        // Não atualiza a senha aqui para não sobrescrever com null
+        tecnico.setPerfis(dto.getPerfis());
+        return tecnico;
+    }
+
+    private Tecnico fromDTOCreate(PessoaCreateDTO dto) {
+        Tecnico tecnico = new Tecnico();
+        tecnico.setId(dto.getId());
+        tecnico.setNome(dto.getNome());
+        tecnico.setCpf(dto.getCpf());
+        tecnico.setEmail(dto.getEmail());
+        tecnico.setSenha(dto.getSenha()); // Define a senha criptografada
         tecnico.setPerfis(dto.getPerfis());
         return tecnico;
     }

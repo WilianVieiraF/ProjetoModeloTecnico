@@ -1,6 +1,7 @@
 package com.example.projetomodelowilian.service;
 
 import com.example.projetomodelowilian.DTO.ClienteDTO;
+import com.example.projetomodelowilian.DTO.PessoaCreateDTO;
 import com.example.projetomodelowilian.entity.Cliente;
 import com.example.projetomodelowilian.entity.Tecnico;
 import com.example.projetomodelowilian.enums.Status;
@@ -37,18 +38,18 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
-    public Cliente create(ClienteDTO clienteDTO) {
+    public Cliente create(PessoaCreateDTO clienteDTO) {
         clienteDTO.setId(null);
         clienteDTO.setSenha(passwordEncoder.encode(clienteDTO.getSenha()));
         validaPorCpfEEmail(clienteDTO);
-        Cliente newCliente = fromDTO(clienteDTO);
+        Cliente newCliente = fromDTOCreate(clienteDTO);
         return clienteRepository.save(newCliente);
     }
 
-    public Cliente update(Long id, ClienteDTO clienteDTO) {
+    public Cliente update(Long id, PessoaCreateDTO clienteDTO) {
         clienteDTO.setId(id);
         Cliente oldCliente = findById(id);
-        clienteDTO.setSenha(passwordEncoder.encode(clienteDTO.getSenha()));
+        // A senha só deve ser atualizada se for fornecida. Lógica adicional pode ser necessária.
         validaPorCpfEEmail(clienteDTO);
         oldCliente = fromDTO(clienteDTO);
         return clienteRepository.save(oldCliente);
@@ -64,7 +65,7 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
-    private void validaPorCpfEEmail(ClienteDTO clienteDTO) {
+    private void validaPorCpfEEmail(PessoaCreateDTO clienteDTO) {
         // Validação de CPF
         Optional<Cliente> clientePorCpf = clienteRepository.findByCpf(clienteDTO.getCpf());
         if (clientePorCpf.isPresent() && !clientePorCpf.get().getId().equals(clienteDTO.getId())) {
@@ -88,13 +89,24 @@ public class ClienteService {
         }
     }
 
-    private Cliente fromDTO(ClienteDTO dto) {
+    private Cliente fromDTO(PessoaCreateDTO dto) {
         Cliente cliente = new Cliente();
         cliente.setId(dto.getId());
         cliente.setNome(dto.getNome());
         cliente.setCpf(dto.getCpf());
         cliente.setEmail(dto.getEmail());
-        cliente.setSenha(dto.getSenha()); // Lembre-se de criptografar a senha
+        // Não atualiza a senha aqui para não sobrescrever com null
+        cliente.setPerfis(dto.getPerfis());
+        return cliente;
+    }
+
+    private Cliente fromDTOCreate(PessoaCreateDTO dto) {
+        Cliente cliente = new Cliente();
+        cliente.setId(dto.getId());
+        cliente.setNome(dto.getNome());
+        cliente.setCpf(dto.getCpf());
+        cliente.setEmail(dto.getEmail());
+        cliente.setSenha(dto.getSenha()); // Define a senha criptografada
         cliente.setPerfis(dto.getPerfis());
         return cliente;
     }

@@ -1,63 +1,62 @@
 package com.example.projetomodelowilian.resource;
 
-import com.example.projetomodelowilian.model.Cliente;
+import com.example.projetomodelowilian.DTO.ClienteCreateDTO;
+import com.example.projetomodelowilian.DTO.ClienteDTO;
+import com.example.projetomodelowilian.entity.Cliente;
 import com.example.projetomodelowilian.service.ClienteService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Path("/clientes")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/clientes")
 public class ClienteResource {
 
-    @Inject
+    @Autowired
     private ClienteService clienteService;
 
-    @GET
-    public Response listarTodos() {
+    @GetMapping
+    public ResponseEntity<List<ClienteDTO>> listarTodos() {
         List<Cliente> clientes = clienteService.listarTodos();
-        return Response.ok(clientes).build();
+        List<ClienteDTO> clientesDTO = clientes.stream().map(ClienteDTO::new).collect(Collectors.toList());
+        return ResponseEntity.ok(clientesDTO);
     }
 
-    @GET
-    @Path("/{id}")
-    public Response buscarPorId(@PathParam("id") Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteDTO> buscarPorId(@PathVariable Long id) {
         Cliente cliente = clienteService.buscarPorId(id);
         if (cliente != null) {
-            return Response.ok(cliente).build();
+            return ResponseEntity.ok(new ClienteDTO(cliente));
         }
-    
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseEntity.notFound().build();
     }
 
-    @POST
-    public Response criar(Cliente cliente) {
-        Cliente novoCliente = clienteService.salvar(cliente);
-    
-        URI uri = URI.create("/clientes/" + novoCliente.getId());
-        return Response.created(uri).entity(novoCliente).build();
+    @PostMapping
+    public ResponseEntity<ClienteDTO> criar(@Valid @RequestBody ClienteCreateDTO clienteDTO) {
+        Cliente novoCliente = clienteService.create(clienteDTO);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(novoCliente.getId()).toUri();
+        return ResponseEntity.created(uri).body(new ClienteDTO(novoCliente));
     }
 
-    @PUT
-    @Path("/{id}")
-    public Response atualizar(@PathParam("id") Long id, Cliente cliente) {
-        Cliente clienteAtualizado = clienteService.atualizar(id, cliente);
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteCreateDTO clienteDTO) {
+        Cliente clienteAtualizado = clienteService.update(id, clienteDTO);
         if (clienteAtualizado != null) {
-            return Response.ok(clienteAtualizado).build();
+            return ResponseEntity.ok(new ClienteDTO(clienteAtualizado));
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseEntity.notFound().build();
     }
 
-    @DELETE
-    @Path("/{id}")
-    public Response deletar(@PathParam("id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         clienteService.deletar(id);
-    
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 }
