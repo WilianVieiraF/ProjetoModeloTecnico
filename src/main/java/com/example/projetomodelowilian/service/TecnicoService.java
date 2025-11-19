@@ -29,16 +29,16 @@ public class TecnicoService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Tecnico findById(Long id) {
+    public Tecnico buscarPorId(Long id) {
         return tecnicoRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Técnico não encontrado! Id: " + id));
     }
 
-    public List<Tecnico> findAll() {
+    public List<Tecnico> listarTodos() {
         return tecnicoRepository.findAll();
     }
 
-    public Tecnico create(PessoaCreateDTO tecnicoDTO) {
+    public Tecnico criar(PessoaCreateDTO tecnicoDTO) {
         tecnicoDTO.setId(null);
         tecnicoDTO.setSenha(passwordEncoder.encode(tecnicoDTO.getSenha()));
         validaPorCpfEEmail(tecnicoDTO);
@@ -46,17 +46,17 @@ public class TecnicoService {
         return tecnicoRepository.save(newTecnico);
     }
 
-    public Tecnico update(Long id, PessoaCreateDTO tecnicoDTO) {
+    public Tecnico atualizar(Long id, PessoaCreateDTO tecnicoDTO) {
         tecnicoDTO.setId(id);
-        Tecnico oldTecnico = findById(id);
+        Tecnico oldTecnico = buscarPorId(id);
         // A senha só deve ser atualizada se for fornecida. Lógica adicional pode ser necessária.
         validaPorCpfEEmail(tecnicoDTO);
         oldTecnico = fromDTO(tecnicoDTO);
         return tecnicoRepository.save(oldTecnico);
     }
 
-    public void delete(Long id) {
-        Tecnico tecnico = findById(id); // Reutiliza o findById para verificar se o técnico existe
+    public void deletar(Long id) {
+        Tecnico tecnico = buscarPorId(id); // Reutiliza o buscarPorId para verificar se o técnico existe
 
         
         if (chamadoRepository.existsByTecnicoIdAndStatusNot(id, Status.ENCERRADO)) {

@@ -31,16 +31,13 @@ public class TecnicoResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<TecnicoDTO> buscarPorId(@PathVariable Long id) {
-        Tecnico tecnico = tecnicoService.buscarPorId(id);
-        if (tecnico != null) {
-            return ResponseEntity.ok(new TecnicoDTO(tecnico));
-        }
-        return ResponseEntity.notFound().build();
+        Tecnico tecnico = tecnicoService.buscarPorId(id); // Deixa a exceção ser lançada se não encontrar
+        return ResponseEntity.ok(new TecnicoDTO(tecnico));
     }
 
     @PostMapping
     public ResponseEntity<TecnicoDTO> criar(@Valid @RequestBody TecnicoCreateDTO tecnicoDTO) {
-        Tecnico novoTecnico = tecnicoService.create(tecnicoDTO);
+        Tecnico novoTecnico = tecnicoService.criar(tecnicoDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(novoTecnico.getId()).toUri();
         return ResponseEntity.created(uri).body(new TecnicoDTO(novoTecnico));
@@ -48,11 +45,8 @@ public class TecnicoResource {
 
     @PutMapping("/{id}")
     public ResponseEntity<TecnicoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody TecnicoCreateDTO tecnicoDTO) {
-        Tecnico tecnicoAtualizado = tecnicoService.update(id, tecnicoDTO);
-        if (tecnicoAtualizado != null) {
-            return ResponseEntity.ok(new TecnicoDTO(tecnicoAtualizado));
-        }
-        return ResponseEntity.notFound().build();
+        Tecnico tecnicoAtualizado = tecnicoService.atualizar(id, tecnicoDTO);
+        return ResponseEntity.ok(new TecnicoDTO(tecnicoAtualizado));
     }
 
     @DeleteMapping("/{id}")

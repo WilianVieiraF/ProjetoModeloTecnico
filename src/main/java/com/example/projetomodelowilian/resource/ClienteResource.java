@@ -30,16 +30,13 @@ public class ClienteResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDTO> buscarPorId(@PathVariable Long id) {
-        Cliente cliente = clienteService.buscarPorId(id);
-        if (cliente != null) {
-            return ResponseEntity.ok(new ClienteDTO(cliente));
-        }
-        return ResponseEntity.notFound().build();
+        Cliente cliente = clienteService.buscarPorId(id); // Deixa a exceção ser lançada se não encontrar
+        return ResponseEntity.ok(new ClienteDTO(cliente));
     }
 
     @PostMapping
     public ResponseEntity<ClienteDTO> criar(@Valid @RequestBody ClienteCreateDTO clienteDTO) {
-        Cliente novoCliente = clienteService.create(clienteDTO);
+        Cliente novoCliente = clienteService.criar(clienteDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(novoCliente.getId()).toUri();
         return ResponseEntity.created(uri).body(new ClienteDTO(novoCliente));
@@ -47,11 +44,8 @@ public class ClienteResource {
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteCreateDTO clienteDTO) {
-        Cliente clienteAtualizado = clienteService.update(id, clienteDTO);
-        if (clienteAtualizado != null) {
-            return ResponseEntity.ok(new ClienteDTO(clienteAtualizado));
-        }
-        return ResponseEntity.notFound().build();
+        Cliente clienteAtualizado = clienteService.atualizar(id, clienteDTO);
+        return ResponseEntity.ok(new ClienteDTO(clienteAtualizado));
     }
 
     @DeleteMapping("/{id}")

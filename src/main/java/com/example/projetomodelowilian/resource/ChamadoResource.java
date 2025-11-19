@@ -29,16 +29,12 @@ public class ChamadoResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<ChamadoDTO> buscarPorId(@PathVariable Long id) {
-        Chamado chamado = chamadoService.buscarPorId(id);
-        if (chamado != null) {
-            return ResponseEntity.ok(new ChamadoDTO(chamado));
-        }
-        return ResponseEntity.notFound().build();
+        Chamado chamado = chamadoService.buscarPorId(id); // Deixa a exceção ser lançada se não encontrar
+        return ResponseEntity.ok(new ChamadoDTO(chamado));
     }
 
     @PostMapping
     public ResponseEntity<ChamadoDTO> criar(@Valid @RequestBody ChamadoDTO chamadoDTO) {
-        // Supondo que você terá um método create no service que aceita um DTO
         Chamado novoChamado = chamadoService.create(chamadoDTO);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(novoChamado.getId()).toUri();
         return ResponseEntity.created(uri).body(new ChamadoDTO(novoChamado));
@@ -47,10 +43,7 @@ public class ChamadoResource {
     @PutMapping("/{id}")
     public ResponseEntity<ChamadoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ChamadoDTO chamadoDTO) {
         Chamado chamadoAtualizado = chamadoService.atualizar(id, chamadoDTO);
-        if (chamadoAtualizado != null) {
-            return ResponseEntity.ok(new ChamadoDTO(chamadoAtualizado));
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new ChamadoDTO(chamadoAtualizado));
     }
 
     @DeleteMapping("/{id}")

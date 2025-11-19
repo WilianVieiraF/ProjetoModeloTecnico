@@ -53,4 +53,17 @@ public class ResourceExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<StandardError> genericException(Exception ex, HttpServletRequest request) {
+        StandardError error = new StandardError(
+                LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Internal Server Error",
+                "Ocorreu um erro inesperado no servidor.", 
+                request.getRequestURI()
+        );
+        
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
 }

@@ -29,16 +29,16 @@ public class ClienteService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Cliente findById(Long id) {
+    public Cliente buscarPorId(Long id) {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Cliente não encontrado! Id: " + id));
     }
 
-    public List<Cliente> findAll() {
+    public List<Cliente> listarTodos() {
         return clienteRepository.findAll();
     }
 
-    public Cliente create(PessoaCreateDTO clienteDTO) {
+    public Cliente criar(PessoaCreateDTO clienteDTO) {
         clienteDTO.setId(null);
         clienteDTO.setSenha(passwordEncoder.encode(clienteDTO.getSenha()));
         validaPorCpfEEmail(clienteDTO);
@@ -46,17 +46,17 @@ public class ClienteService {
         return clienteRepository.save(newCliente);
     }
 
-    public Cliente update(Long id, PessoaCreateDTO clienteDTO) {
+    public Cliente atualizar(Long id, PessoaCreateDTO clienteDTO) {
         clienteDTO.setId(id);
-        Cliente oldCliente = findById(id);
+        Cliente oldCliente = buscarPorId(id);
         // A senha só deve ser atualizada se for fornecida. Lógica adicional pode ser necessária.
         validaPorCpfEEmail(clienteDTO);
         oldCliente = fromDTO(clienteDTO);
         return clienteRepository.save(oldCliente);
     }
 
-    public void delete(Long id) {
-        Cliente cliente = findById(id);
+    public void deletar(Long id) {
+        Cliente cliente = buscarPorId(id);
 
         // Regra: Não permitir exclusão de cliente com chamados em aberto
         if (chamadoRepository.existsByClienteIdAndStatusNot(id, Status.ENCERRADO)) {
