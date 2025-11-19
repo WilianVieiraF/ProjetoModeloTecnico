@@ -15,7 +15,6 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClienteResource {
 
-  
     @Inject
     private ClienteService clienteService;
 
@@ -62,4 +61,3 @@ public class ClienteResource {
         return Response.noContent().build();
     }
 }
-

@@ -10,12 +10,12 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 
+
 @Path("/tecnicos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TecnicoResource {
 
-    // Injeta a camada de serviço para lidar com as regras de negócio.
     @Inject
     private TecnicoService tecnicoService;
 
@@ -59,4 +59,3 @@ public class TecnicoResource {
         return Response.noContent().build();
     }
 }
-

@@ -15,7 +15,6 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ChamadoResource {
 
-    
     @Inject
     private ChamadoService chamadoService;
 
